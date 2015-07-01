@@ -1,7 +1,7 @@
 require 'httparty'
 
 Given(/^an activity called "([^"]*)" exists$/) do |name|
-  Activity.new(name)
+  ActivityStore.transaction { ActivityStore[name] = Activity.new(name) }
 end
 
 When(/^I request GET "([^"]*)"$/) do |url|

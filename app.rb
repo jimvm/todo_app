@@ -1,6 +1,7 @@
 require 'webmachine'
 require 'roar/decorator'
 require 'roar/json/hal'
+require 'yaml/store'
 
 class Activity
   def initialize(name)
@@ -9,6 +10,8 @@ class Activity
 
   attr_reader :name
 end
+
+ActivityStore = YAML::Store.new("activities.yml")
 
 class ActivityDecorator < Roar::Decorator
   include Roar::JSON::HAL
@@ -27,11 +30,19 @@ class ActivityResource < Webmachine::Resource
     [["application/hal+json", :to_json]]
   end
 
+  def resource_exists?
+    activity
+  end
+
   def to_json
     ActivityDecorator.new(Activity.new(name)).to_json
   end
 
   private
+    def activity
+      @activity ||= ActivityStore.transaction { ActivityStore.fetch name }
+    end
+
     def name
       request.path_info[:name]
     end
