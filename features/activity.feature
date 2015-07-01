@@ -11,3 +11,9 @@ Feature: Interacting with an activity
       "self": { "href": "http://localhost:8080/activities/something" }
     }}
     """
+
+  Scenario: Deleting an activity
+    Given an activity called "something" exists
+    When I request DELETE "/activities/something"
+    Then the response code should be 204
+    And the "something" activity should be gone

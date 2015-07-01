@@ -23,7 +23,7 @@ end
 
 class ActivityResource < Webmachine::Resource
   def allowed_methods
-    ["GET"]
+    ["GET", "DELETE"]
   end
 
   def content_types_provided
@@ -34,6 +34,10 @@ class ActivityResource < Webmachine::Resource
     activity
   end
 
+  def delete_resource
+    ActivityStore.transaction { ActivityStore.delete name }
+  end
+
   def to_json
     ActivityDecorator.new(Activity.new(name)).to_json
   end
@@ -41,6 +45,8 @@ class ActivityResource < Webmachine::Resource
   private
     def activity
       @activity ||= ActivityStore.transaction { ActivityStore.fetch name }
+    rescue PStore::Error
+      false
     end
 
     def name
