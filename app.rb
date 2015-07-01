@@ -39,7 +39,7 @@ class ActivityResource < Webmachine::Resource
   end
 
   def to_json
-    ActivityDecorator.new(Activity.new(name)).to_json
+    ActivityDecorator.new(activity).to_json
   end
 
   private
