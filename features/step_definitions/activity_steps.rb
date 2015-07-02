@@ -39,3 +39,7 @@ Then(/^the "([^"]*)" activity should exist$/) do |name|
   @response = HTTParty.get "http://localhost:8080/activities/#{name}"
   expect(@response.code).to eq 200
 end
+
+When(/^I request PUT "([^"]*)" with:$/) do |url, json|
+  @response = HTTParty.put "http://localhost:8080#{url}", body: "#{json}", headers: {"Content-Type" => "application/json"}
+end

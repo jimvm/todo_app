@@ -24,11 +24,15 @@ end
 
 class ActivityResource < Webmachine::Resource
   def allowed_methods
-    ["GET", "DELETE"]
+    ["GET", "DELETE", "PUT"]
   end
 
   def content_types_provided
     [["application/hal+json", :to_json]]
+  end
+
+  def content_types_accepted
+    [["application/json", :from_json]]
   end
 
   def resource_exists?
@@ -44,6 +48,15 @@ class ActivityResource < Webmachine::Resource
   end
 
   private
+    def from_json
+      new_activity = Activity.new(new_name)
+
+      ActivityStore.transaction do
+        ActivityStore.delete name
+        ActivityStore[new_name] = new_activity
+      end
+    end
+
     def activity
       @activity ||= ActivityStore.transaction { ActivityStore.fetch name }
     rescue PStore::Error
@@ -52,6 +65,11 @@ class ActivityResource < Webmachine::Resource
 
     def name
       request.path_info[:name]
+    end
+
+    def new_name
+      json = JSON.parse(request.body.to_s)
+      json["name"]
     end
 end
 

@@ -26,3 +26,13 @@ Feature: Interacting with an activity
     """
     Then the response code should be 201
     And the "nothing" activity should exist
+
+  Scenario: Updating an activity
+    Given an activity called "something" exists
+    When I request PUT "/activities/something" with:
+    """
+{"name": "something-else" }
+    """
+    Then the response code should be 204
+    And the "something" activity should be gone
+    And the "something-else" activity should exist
