@@ -2,6 +2,7 @@ require 'webmachine'
 require 'roar/decorator'
 require 'roar/json/hal'
 require 'yaml/store'
+require 'json'
 
 class Activity
   def initialize(name)
@@ -54,6 +55,36 @@ class ActivityResource < Webmachine::Resource
     end
 end
 
+class ActivitiesResource < Webmachine::Resource
+  def allowed_methods
+    ["POST"]
+  end
+
+  def content_types_accepted
+    [["application/json", :from_json]]
+  end
+
+  def post_is_create?
+    true
+  end
+
+  def create_path
+    "/activities/#{name}"
+  end
+
+  private
+    def from_json
+      activity = Activity.new(name)
+      ActivityStore.transaction { ActivityStore[name] = activity }
+    end
+
+    def name
+      json = JSON.parse(request.body.to_s)
+      json["name"]
+    end
+end
+
 Webmachine.application.routes do
   add ["activities", :name], ActivityResource
+  add ["activities"], ActivitiesResource
 end

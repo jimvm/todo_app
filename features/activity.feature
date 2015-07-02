@@ -17,3 +17,12 @@ Feature: Interacting with an activity
     When I request DELETE "/activities/something"
     Then the response code should be 204
     And the "something" activity should be gone
+
+  Scenario: Creating an activity
+    Given an activity called "nothing" doesn't exist
+    When I request POST "/activities" with:
+    """
+{"name": "nothing" }
+    """
+    Then the response code should be 201
+    And the "nothing" activity should exist
