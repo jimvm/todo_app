@@ -9,7 +9,8 @@ Feature: Interacting with an activity
     """
     { "_links": {
       "self": { "href": "http://localhost:8080/activities/something" }
-    }}
+      },
+      "name": "something"}
     """
 
   Scenario: Deleting an activity

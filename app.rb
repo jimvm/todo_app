@@ -20,6 +20,8 @@ class ActivityDecorator < Roar::Decorator
   link :self do
     "http://localhost:8080/activities/#{represented.name}"
   end
+
+  property :name
 end
 
 class ActivityResource < Webmachine::Resource
