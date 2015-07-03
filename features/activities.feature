@@ -1,6 +1,8 @@
-Feature: An overview of my activities
+Feature: Managing activities
+  A person that wants to track their day to day tasks
+  should be able to manage their activities.
 
-  Scenario: Seeing all my activities
+  Scenario: Viewing all activities
     Given an activity called "something" exists
     When I request GET "/activities"
     Then the response code should be 200
@@ -20,3 +22,39 @@ Feature: An overview of my activities
     }
     }
     """
+
+  Scenario: Viewing a specific activity
+    Given an activity called "something" exists
+    When I request GET "/activities/something"
+    Then the HAL/JSON response should be:
+    """
+    { "_links": {
+      "self": { "href": "http://localhost:8080/activities/something" }
+      },
+      "name": "something"}
+    """
+
+  Scenario: Creating an activity
+    Given an activity called "nothing" doesn't exist
+    When I request POST "/activities" with:
+    """
+    {"name": "nothing" }
+    """
+    Then the response code should be 201
+    And the "nothing" activity should exist
+
+  Scenario: Updating an activity
+    Given an activity called "something" exists
+    When I request PUT "/activities/something" with:
+    """
+    {"name": "something-else" }
+    """
+    Then the response code should be 204
+    And the "something" activity should be gone
+    And the "something-else" activity should exist
+
+  Scenario: Deleting an activity
+    Given an activity called "something" exists
+    When I request DELETE "/activities/something"
+    Then the response code should be 204
+    And the "something" activity should be gone
