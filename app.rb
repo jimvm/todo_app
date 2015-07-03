@@ -24,6 +24,30 @@ class ActivityDecorator < Roar::Decorator
   property :name
 end
 
+class Activities
+  def activities
+    all = roots.inject([]) do |result, name|
+      activity = ActivityStore.transaction { ActivityStore[name] }
+      result << activity
+    end
+  end
+
+  private
+    def roots
+      @roots ||= ActivityStore.transaction { ActivityStore.roots }
+    end
+end
+
+class ActivitiesDecorator < Roar::Decorator
+  include Roar::JSON::HAL
+
+  link :self do
+    "http://localhost:8080/activities"
+  end
+
+  collection :activities, extend: ActivityDecorator, embedded: true
+end
+
 class ActivityResource < Webmachine::Resource
   def allowed_methods
     ["GET", "DELETE", "PUT"]
@@ -77,7 +101,11 @@ end
 
 class ActivitiesResource < Webmachine::Resource
   def allowed_methods
-    ["POST"]
+    ["GET", "POST"]
+  end
+
+  def content_types_provided
+    [["application/hal+json", :to_json]]
   end
 
   def content_types_accepted
@@ -90,6 +118,10 @@ class ActivitiesResource < Webmachine::Resource
 
   def create_path
     "/activities/#{name}"
+  end
+
+  def to_json
+    ActivitiesDecorator.new(Activities.new).to_json
   end
 
   private
