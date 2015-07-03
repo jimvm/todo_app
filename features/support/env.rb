@@ -1,7 +1,6 @@
-require_relative '../../app'
 require 'childprocess'
 
-server = ChildProcess.build "ruby", "run.rb"
+server = ChildProcess.build "ruby", "webmachine_application.rb"
 server.start
 
 at_exit do

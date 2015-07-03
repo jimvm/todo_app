@@ -1,52 +1,5 @@
-require 'webmachine'
-require 'roar/decorator'
-require 'roar/json/hal'
-require 'yaml/store'
-require 'json'
-
-class Activity
-  def initialize(name)
-    @name = name
-  end
-
-  attr_reader :name
-end
-
-ActivityStore = YAML::Store.new("activities.yml")
-
-class ActivityDecorator < Roar::Decorator
-  include Roar::JSON::HAL
-
-  link :self do
-    "http://localhost:8080/activities/#{represented.name}"
-  end
-
-  property :name
-end
-
-class Activities
-  def activities
-    all = roots.inject([]) do |result, name|
-      activity = ActivityStore.transaction { ActivityStore[name] }
-      result << activity
-    end
-  end
-
-  private
-    def roots
-      @roots ||= ActivityStore.transaction { ActivityStore.roots }
-    end
-end
-
-class ActivitiesDecorator < Roar::Decorator
-  include Roar::JSON::HAL
-
-  link :self do
-    "http://localhost:8080/activities"
-  end
-
-  collection :activities, extend: ActivityDecorator, embedded: true
-end
+require_relative 'decorators'
+require_relative 'activities'
 
 class ActivityResource < Webmachine::Resource
   def allowed_methods
@@ -134,9 +87,4 @@ class ActivitiesResource < Webmachine::Resource
       json = JSON.parse(request.body.to_s)
       json["name"]
     end
-end
-
-Webmachine.application.routes do
-  add ["activities", :name], ActivityResource
-  add ["activities"], ActivitiesResource
 end

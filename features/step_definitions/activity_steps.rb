@@ -1,4 +1,5 @@
 require 'httparty'
+require_relative '../../app/activities'
 
 Given(/^an activity called "([^"]*)" exists$/) do |name|
   ActivityStore.transaction { ActivityStore[name] = Activity.new(name) }
