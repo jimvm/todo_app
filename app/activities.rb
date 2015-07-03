@@ -11,15 +11,42 @@ class Activity
 end
 
 class Activities
-  def activities
-    all = roots.inject([]) do |result, name|
+  def self.activities
+    roots.inject([]) do |result, name|
       activity = ActivityStore.transaction { ActivityStore[name] }
+
       result << activity
     end
   end
 
+  def self.delete(name)
+    ActivityStore.transaction { ActivityStore.delete name }
+  end
+
+  def self.create(name)
+    activity = Activity.new(name)
+
+    ActivityStore.transaction { ActivityStore[name] = activity }
+  end
+
+  def self.replace(name, new_name)
+    new_activity = Activity.new(new_name)
+
+    ActivityStore.transaction do
+      ActivityStore.delete name
+
+      ActivityStore[new_name] = new_activity
+    end
+  end
+
+  def self.find(name)
+    ActivityStore.transaction { ActivityStore[name] }
+  rescue PStore::Error
+    false
+  end
+
   private
-    def roots
+    def self.roots
       @roots ||= ActivityStore.transaction { ActivityStore.roots }
     end
 end

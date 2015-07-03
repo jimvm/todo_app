@@ -19,7 +19,7 @@ class ActivityResource < Webmachine::Resource
   end
 
   def delete_resource
-    ActivityStore.transaction { ActivityStore.delete name }
+    Activities.delete name
   end
 
   def to_json
@@ -28,18 +28,11 @@ class ActivityResource < Webmachine::Resource
 
   private
     def from_json
-      new_activity = Activity.new(new_name)
-
-      ActivityStore.transaction do
-        ActivityStore.delete name
-        ActivityStore[new_name] = new_activity
-      end
+      Activities.replace name, new_name
     end
 
     def activity
-      @activity ||= ActivityStore.transaction { ActivityStore.fetch name }
-    rescue PStore::Error
-      false
+      @activity ||= Activities.find name
     end
 
     def name
@@ -74,13 +67,12 @@ class ActivitiesResource < Webmachine::Resource
   end
 
   def to_json
-    ActivitiesDecorator.new(Activities.new).to_json
+    ActivitiesDecorator.new(Activities).to_json
   end
 
   private
     def from_json
-      activity = Activity.new(name)
-      ActivityStore.transaction { ActivityStore[name] = activity }
+      Activities.create name
     end
 
     def name
