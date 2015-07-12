@@ -18,5 +18,5 @@ class ActivitiesDecorator < Roar::Decorator
     "http://localhost:8080/activities"
   end
 
-  collection :activities, extend: ActivityDecorator, embedded: true
+  collection :all, as: :activities, extend: ActivityDecorator, embedded: true
 end

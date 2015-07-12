@@ -9,7 +9,7 @@ class Activity
 end
 
 class Activities
-  def self.activities
+  def self.all
     roots.inject([]) do |result, name|
       activity = store.transaction { store[name] }
 
