@@ -1,14 +1,7 @@
 require 'yaml/store'
+require 'ostruct'
 
 class Activity
-  def initialize(name)
-    @name = name
-  end
-
-  attr_reader :name
-end
-
-class Activities
   def self.all
     roots.inject([]) do |result, name|
       activity = store.transaction { store[name] }
@@ -22,13 +15,13 @@ class Activities
   end
 
   def self.create(name)
-    activity = Activity.new(name)
+    activity = OpenStruct.new(name: name)
 
     store.transaction { store[name] = activity }
   end
 
   def self.replace(name, new_name)
-    new_activity = Activity.new(new_name)
+    new_activity = OpenStruct.new(name: name)
 
     store.transaction do
       store.delete name

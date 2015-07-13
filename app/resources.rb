@@ -19,7 +19,7 @@ class ActivityResource < Webmachine::Resource
   end
 
   def delete_resource
-    Activities.delete name
+    Activity.delete name
   end
 
   def to_json
@@ -28,11 +28,11 @@ class ActivityResource < Webmachine::Resource
 
   private
     def from_json
-      Activities.replace name, new_name
+      Activity.replace name, new_name
     end
 
     def activity
-      @activity ||= Activities.find name
+      @activity ||= Activity.find name
     end
 
     def name
@@ -67,12 +67,12 @@ class ActivitiesResource < Webmachine::Resource
   end
 
   def to_json
-    ActivitiesDecorator.new(Activities).to_json
+    ActivitiesDecorator.new(Activity).to_json
   end
 
   private
     def from_json
-      Activities.create name
+      Activity.create name
     end
 
     def name
