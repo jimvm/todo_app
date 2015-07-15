@@ -2,7 +2,7 @@ require 'httparty'
 require_relative '../../app/activities'
 
 Given(/^an activity called "([^"]*)" exists$/) do |name|
-  Activity.create name
+  Activity.create name: name
 end
 
 When(/^I request GET "([^"]*)"$/) do |url|
@@ -27,7 +27,8 @@ Then(/^the "([^"]*)" activity should be gone$/) do |name|
 end
 
 Given(/^an activity called "([^"]*)" doesn't exist$/) do |name|
-  Activity.delete name
+  activity = Activity.find(name: name)
+  activity.delete if activity
 
   @response = HTTParty.get "http://localhost:8080/activities/#{name}"
   expect(@response.code).to eq 404

@@ -1,3 +1,5 @@
-After do
-  `rm activities.yml`
+Before do
+  DB.tables.each do |table|
+    DB[table].delete
+  end
 end
