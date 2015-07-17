@@ -8,7 +8,7 @@ gem 'sequel'
 
 group :test do
   gem 'cucumber'
-  gem 'rspec-expectations'
+  gem 'rspec'
   gem 'httparty'
   gem 'childprocess'
   gem 'json'
