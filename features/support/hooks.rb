@@ -1,5 +1,7 @@
 Before do
-  DB.tables.each do |table|
-    DB[table].delete
+  db = Sequel.postgres 'todo_test'
+
+  db.tables.each do |table|
+    db[table].delete
   end
 end
