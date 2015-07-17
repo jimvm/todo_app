@@ -28,20 +28,20 @@ class ActivityResource < Webmachine::Resource
 
   private
     def from_json
-      activity.update name: new_name
+      activity.update description: new_description
     end
 
     def activity
-      @activity ||= Activity.find(name: name)
+      @activity ||= Activity.find(description: description)
     end
 
-    def name
-      request.path_info[:name]
+    def description
+      request.path_info[:description]
     end
 
-    def new_name
+    def new_description
       json = JSON.parse(request.body.to_s)
-      json["name"]
+      json["description"]
     end
 end
 
@@ -63,7 +63,7 @@ class ActivitiesResource < Webmachine::Resource
   end
 
   def create_path
-    "/activities/#{name}"
+    "/activities/#{description}"
   end
 
   def to_json
@@ -72,11 +72,11 @@ class ActivitiesResource < Webmachine::Resource
 
   private
     def from_json
-      Activity.create name: name
+      Activity.create description: description
     end
 
-    def name
+    def description
       json = JSON.parse(request.body.to_s)
-      json["name"]
+      json["description"]
     end
 end

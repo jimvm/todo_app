@@ -1,8 +1,8 @@
 require 'httparty'
 require_relative '../../app/activities'
 
-Given(/^an activity called "([^"]*)" exists$/) do |name|
-  Activity.create name: name
+Given(/^an activity called "([^"]*)" exists$/) do |description|
+  Activity.create description: description
 end
 
 When(/^I request GET "([^"]*)"$/) do |url|
@@ -21,16 +21,16 @@ Then(/^the response code should be (\d+)$/) do |response_code|
   expect(@response.code.to_s).to eq response_code
 end
 
-Then(/^the "([^"]*)" activity should be gone$/) do |name|
-  @response = HTTParty.get "http://localhost:8080/activities/#{name}", headers: {"Accept" => "application/hal+json"}
+Then(/^the "([^"]*)" activity should be gone$/) do |description|
+  @response = HTTParty.get "http://localhost:8080/activities/#{description}", headers: {"Accept" => "application/hal+json"}
   expect(@response.code).to eq 404
 end
 
-Given(/^an activity called "([^"]*)" doesn't exist$/) do |name|
-  activity = Activity.find(name: name)
+Given(/^an activity called "([^"]*)" doesn't exist$/) do |description|
+  activity = Activity.find description: description
   activity.delete if activity
 
-  @response = HTTParty.get "http://localhost:8080/activities/#{name}"
+  @response = HTTParty.get "http://localhost:8080/activities/#{description}"
   expect(@response.code).to eq 404
 end
 
@@ -38,8 +38,8 @@ When(/^I request POST "([^"]*)" with:$/) do |url, json|
   @response = HTTParty.post "http://localhost:8080#{url}", body: "#{json}", headers: {"Content-Type" => "application/json"}
 end
 
-Then(/^the "([^"]*)" activity should exist$/) do |name|
-  @response = HTTParty.get "http://localhost:8080/activities/#{name}"
+Then(/^the "([^"]*)" activity should exist$/) do |description|
+  @response = HTTParty.get "http://localhost:8080/activities/#{description}"
   expect(@response.code).to eq 200
 end
 

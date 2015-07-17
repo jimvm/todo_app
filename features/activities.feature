@@ -16,7 +16,7 @@ Feature: Managing activities
       { "_links": {
           "self": { "href": "http://localhost:8080/activities/something"}
           },
-          "name": "something"
+          "description": "something"
       }
       ]
     }
@@ -31,14 +31,14 @@ Feature: Managing activities
     { "_links": {
       "self": { "href": "http://localhost:8080/activities/something" }
       },
-      "name": "something"}
+      "description": "something"}
     """
 
   Scenario: Creating an activity
     Given an activity called "nothing" doesn't exist
     When I request POST "/activities" with:
     """
-    {"name": "nothing" }
+    {"description": "nothing" }
     """
     Then the response code should be 201
     And the "nothing" activity should exist
@@ -47,7 +47,7 @@ Feature: Managing activities
     Given an activity called "something" exists
     When I request PUT "/activities/something" with:
     """
-    {"name": "something-else" }
+    {"description": "something-else" }
     """
     Then the response code should be 204
     And the "something" activity should be gone
