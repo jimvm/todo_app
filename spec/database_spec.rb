@@ -2,6 +2,11 @@ require "rspec"
 require_relative "../app/activities"
 
 RSpec.describe "Activities" do
+  after(:each) do
+    db = Sequel.postgres "todo_test"
+    db[:activities].delete
+  end
+
   context "description" do
     let(:empty_description)     { "" }
     let(:long_description) do
@@ -9,11 +14,6 @@ RSpec.describe "Activities" do
        information about what I want to do."
     end
     let(:duplicate_description) { "something unique" }
-
-    after(:each) do
-      db = Sequel.postgres "todo_test"
-      db[:activities].delete
-    end
 
     describe "database constraint" do
       it "ensures it can not be empty" do
@@ -56,6 +56,19 @@ RSpec.describe "Activities" do
 
         expect{Activity.create description: duplicate_description}.to raise_error \
         Sequel::ValidationFailed, "description is already taken"
+      end
+    end
+  end
+
+  describe "url_slug" do
+    context "database constraint" do
+      it "ensures it is unique" do
+        Activity.create url_slug: "fake_slug", description: "some description"
+
+        duplicate_slug = Activity.new url_slug: "fake_slug", description: "something"
+
+        expect{duplicate_slug.save(validate: false)}.to raise_error \
+        Sequel::UniqueConstraintViolation
       end
     end
   end

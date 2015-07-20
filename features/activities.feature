@@ -14,7 +14,7 @@ Feature: Managing activities
     "_embedded": {
       "activities": [
       { "_links": {
-          "self": { "href": "http://localhost:8080/activities/something"}
+          "self": { "href": "http://localhost:8080/activities/fake_slug"}
           },
           "description": "something"
       }
@@ -25,11 +25,11 @@ Feature: Managing activities
 
   Scenario: Viewing a specific activity
     Given an activity called "something" exists
-    When I request GET "/activities/something"
+    When I request GET "/activities/fake_slug"
     Then the HAL/JSON response should be:
     """
     { "_links": {
-      "self": { "href": "http://localhost:8080/activities/something" }
+      "self": { "href": "http://localhost:8080/activities/fake_slug" }
       },
       "description": "something"}
     """
@@ -45,7 +45,7 @@ Feature: Managing activities
 
   Scenario: Updating an activity
     Given an activity called "something" exists
-    When I request PUT "/activities/something" with:
+    When I request PUT "/activities/fake_slug" with:
     """
     {"description": "something-else" }
     """
@@ -55,6 +55,6 @@ Feature: Managing activities
 
   Scenario: Deleting an activity
     Given an activity called "something" exists
-    When I request DELETE "/activities/something"
+    When I request DELETE "/activities/fake_slug"
     Then the response code should be 204
     And the "something" activity should be gone

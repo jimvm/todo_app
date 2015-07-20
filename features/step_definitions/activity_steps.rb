@@ -2,7 +2,7 @@ require 'httparty'
 require_relative '../../app/activities'
 
 Given(/^an activity called "([^"]*)" exists$/) do |description|
-  Activity.create description: description
+  Activity.create description: description, url_slug: "fake_slug"
 end
 
 When(/^I request GET "([^"]*)"$/) do |url|
@@ -39,7 +39,8 @@ When(/^I request POST "([^"]*)" with:$/) do |url, json|
 end
 
 Then(/^the "([^"]*)" activity should exist$/) do |description|
-  @response = HTTParty.get "http://localhost:8080/activities/#{description}"
+  activity = Activity.find description: description
+  @response = HTTParty.get "http://localhost:8080/activities/#{activity.url_slug}"
   expect(@response.code).to eq 200
 end
 

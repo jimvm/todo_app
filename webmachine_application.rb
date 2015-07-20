@@ -9,7 +9,7 @@ unless ENV["TODO_DATABASE"]
 end
 
 Webmachine.application.routes do
-  add ["activities", :description], ActivityResource
+  add ["activities", :url_slug], ActivityResource
   add ["activities"], ActivitiesResource
 end
 

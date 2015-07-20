@@ -6,6 +6,7 @@ task :setup_test_database do
   db.create_table :activities do
     primary_key :id
     String :description, unique: true
+    String :url_slug,    unique: true
 
     constraint(:min_length_description) { char_length(description) > 0 }
     constraint(:max_length_description) { char_length(description) < 81 }

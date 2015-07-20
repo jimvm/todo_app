@@ -5,7 +5,7 @@ class ActivityDecorator < Roar::Decorator
   include Roar::JSON::HAL
 
   link :self do
-    "http://localhost:8080/activities/#{represented.description}"
+    "http://localhost:8080/activities/#{represented.url_slug}"
   end
 
   property :description
