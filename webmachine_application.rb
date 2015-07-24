@@ -11,6 +11,7 @@ end
 Webmachine.application.routes do
   add ["activities", :url_slug], ActivityResource
   add ["activities"], ActivitiesResource
+  add ["accounts", :url_slug], AccountResource
 end
 
 Webmachine.application.run
