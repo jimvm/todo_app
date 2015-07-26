@@ -16,6 +16,7 @@ task :setup_test_database do
     primary_key :id
     String :name,       unique: true
     String :url_slug,    unique: true
+    String :password_hash,    unique: true
 
     constraint(:min_length_name) { char_length(name) > 3 }
     constraint(:max_length_name) { char_length(name) < 25}

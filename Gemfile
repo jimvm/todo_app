@@ -6,6 +6,8 @@ gem 'roar'
 gem 'pg'
 gem 'sequel'
 
+gem 'bcrypt'
+
 group :test do
   gem 'cucumber'
   gem 'rspec'

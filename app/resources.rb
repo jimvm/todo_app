@@ -2,7 +2,6 @@ require_relative 'decorators'
 require_relative 'activities'
 require_relative 'account'
 
-
 class AccountResource < Webmachine::Resource
   include Webmachine::Resource::Authentication
 
@@ -24,13 +23,9 @@ class AccountResource < Webmachine::Resource
 
   def is_authorized?(authorization_header)
     basic_auth(authorization_header, "Account") do |username, password|
-      @authorized_account = Account.find name: username
+      verified = Account.verify username: username, password: password
 
-      if authorized_account.nil?
-        false
-      else
-        true
-      end
+      @authorized_account = Account.find name: username
     end
   end
 
