@@ -22,13 +22,3 @@ class AccountDecorator < Roar::Decorator
 
   collection :activity, as: :activities, extend: ActivityDecorator, embedded: true
 end
-
-class ActivitiesDecorator < Roar::Decorator
-  include Roar::JSON::HAL
-
-  link :self do
-    "http://localhost:8080/activities"
-  end
-
-  collection :all, as: :activities, extend: ActivityDecorator, embedded: true
-end
