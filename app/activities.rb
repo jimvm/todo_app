@@ -7,11 +7,13 @@ class Activity < Sequel::Model
 
   set_allowed_columns :description, :url_slug
 
+  many_to_one :account
+
   def validate
     super
     validates_min_length 1,  :description
     validates_max_length 80, :description
-    validates_unique         :description
+    validates_unique [:description, :account_id]
   end
 
   def self.create_slug

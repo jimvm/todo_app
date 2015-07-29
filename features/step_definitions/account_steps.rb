@@ -13,7 +13,7 @@ Then(/^an account should exist$/) do
 end
 
 Given(/^an account named "([^"]*)" exists$/) do |name|
-  Account.create name: name, url_slug: "fake_slug", password_hash: Account.create_password_hash('test')
+  Account.create name: name, url_slug: "fake_person", password_hash: Account.create_password_hash('test')
 end
 
 When(/^someone unauthorized visits the "([^"]*)" account page$/) do |name|

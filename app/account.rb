@@ -8,6 +8,8 @@ class Account < Sequel::Model
 
   set_allowed_columns :name, :url_slug, :password_hash
 
+  one_to_many :activity
+
   def validate
     super
     validates_min_length 4,  :name

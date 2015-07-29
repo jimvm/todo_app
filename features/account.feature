@@ -26,7 +26,9 @@ Feature: Managing an account
     And the HAL/JSON response should be:
     """
     { "_links": {
-      "self": { "href": "http://localhost:8080/accounts/fake_slug" }
+      "self": { "href": "http://localhost:8080/accounts/fake_person" }
       },
-      "name": "aperson"}
+      "name": "aperson",
+      "_embedded": { "activities": [] }
+    }
     """

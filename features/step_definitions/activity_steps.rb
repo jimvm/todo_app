@@ -47,3 +47,11 @@ end
 When(/^I request PUT "([^"]*)" with:$/) do |url, json|
   @response = HTTParty.put "http://localhost:8080#{url}", body: "#{json}", headers: {"Content-Type" => "application/json"}
 end
+
+Given(/^"([^"]*)" has an activity called "([^"]*)"$/) do |name, description|
+  account = Account.find name: name
+
+  activity = Activity.create description: description, url_slug: "fake_slug"
+  account.add_activity activity
+  account.save
+end

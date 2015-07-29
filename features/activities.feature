@@ -3,14 +3,16 @@ Feature: Managing activities
   should be able to manage their activities.
 
   Scenario: Viewing all activities
-    Given an activity called "something" exists
-    When I request GET "/activities"
+    Given an account named "aperson" exists
+    And "aperson" has an activity called "something"
+    When "aperson" visits their account page
     Then the response code should be 200
     And the HAL/JSON response should be:
     """
     { "_links": {
-    "self": { "href": "http://localhost:8080/activities" }
+    "self": { "href": "http://localhost:8080/accounts/fake_person" }
     },
+    "name": "aperson",
     "_embedded": {
       "activities": [
       { "_links": {
