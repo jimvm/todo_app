@@ -16,7 +16,7 @@ Feature: Managing activities
     "_embedded": {
       "activities": [
       { "_links": {
-          "self": { "href": "http://localhost:8080/activities/fake_slug"}
+          "self": { "href": "http://localhost:8080/accounts/fake_person/activities/fake_slug"}
           },
           "description": "something"
       }
@@ -26,19 +26,21 @@ Feature: Managing activities
     """
 
   Scenario: Viewing a specific activity
-    Given an activity called "something" exists
-    When I request GET "/activities/fake_slug"
+    Given an account named "aperson" exists
+    And "aperson" has an activity called "something"
+    When I request GET "/accounts/fake_person/activities/fake_slug"
     Then the HAL/JSON response should be:
     """
     { "_links": {
-      "self": { "href": "http://localhost:8080/activities/fake_slug" }
+      "self": { "href": "http://localhost:8080/accounts/fake_person/activities/fake_slug" }
       },
       "description": "something"}
     """
 
   Scenario: Creating an activity
+    Given an account named "aperson" exists
     Given an activity called "nothing" doesn't exist
-    When I request POST "/activities" with:
+    When I request POST "/accounts/fake_person/activities" with:
     """
     {"description": "nothing" }
     """
@@ -46,8 +48,9 @@ Feature: Managing activities
     And the "nothing" activity should exist
 
   Scenario: Updating an activity
-    Given an activity called "something" exists
-    When I request PUT "/activities/fake_slug" with:
+    Given an account named "aperson" exists
+    And "aperson" has an activity called "something"
+    When I request PUT "/accounts/fake_person/activities/fake_slug" with:
     """
     {"description": "something-else" }
     """
@@ -56,7 +59,8 @@ Feature: Managing activities
     And the "something-else" activity should exist
 
   Scenario: Deleting an activity
-    Given an activity called "something" exists
-    When I request DELETE "/activities/fake_slug"
+    Given an account named "aperson" exists
+    And "aperson" has an activity called "something"
+    When I request DELETE "/accounts/fake_person/activities/fake_slug"
     Then the response code should be 204
     And the "something" activity should be gone

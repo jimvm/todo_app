@@ -1,6 +1,7 @@
 require_relative 'decorators'
 require_relative 'activities'
 require_relative 'account'
+require 'json'
 
 class AccountResource < Webmachine::Resource
   include Webmachine::Resource::Authentication
@@ -84,7 +85,7 @@ class ActivityResource < Webmachine::Resource
     end
 
     def url_slug
-      request.path_info[:url_slug]
+      request.path_info[:activity_slug]
     end
 
     def new_description
@@ -111,7 +112,7 @@ class ActivitiesResource < Webmachine::Resource
   end
 
   def create_path
-    "/activities/#{activity_slug}"
+    "/accounts/#{account_slug}/activities/#{activity_slug}"
   end
 
   def to_json
@@ -120,7 +121,7 @@ class ActivitiesResource < Webmachine::Resource
 
   private
     def from_json
-      Activity.create description: description, url_slug: activity_slug
+      account.add_activity Activity.create description: description, url_slug: activity_slug
     end
 
     def description
@@ -130,5 +131,13 @@ class ActivitiesResource < Webmachine::Resource
 
     def activity_slug
       @activity_slug ||= Activity.create_slug
+    end
+
+    def account_slug
+      @account_slug ||= request.path_info[:account_slug]
+    end
+
+    def account
+      @account ||= Account.find url_slug: account_slug
     end
 end

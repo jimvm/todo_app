@@ -40,7 +40,7 @@ end
 
 Then(/^the "([^"]*)" activity should exist$/) do |description|
   activity = Activity.find description: description
-  @response = HTTParty.get "http://localhost:8080/activities/#{activity.url_slug}"
+  @response = HTTParty.get "http://localhost:8080/accounts/fake_slug/activities/#{activity.url_slug}"
   expect(@response.code).to eq 200
 end
 
