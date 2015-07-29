@@ -40,11 +40,11 @@ class AccountResource < Webmachine::Resource
 
   private
     def account
-      @account ||= Account.find url_slug: url_slug
+      @account ||= Account.find url_slug: account_slug
     end
 
-    def url_slug
-      request.path_info[:url_slug]
+    def account_slug
+      request.path_info[:account_slug]
     end
 
     attr_reader :authorized_account
@@ -81,10 +81,10 @@ class ActivityResource < Webmachine::Resource
     end
 
     def activity
-      @activity ||= Activity.find(url_slug: url_slug)
+      @activity ||= Activity.find(url_slug: activity_slug)
     end
 
-    def url_slug
+    def activity_slug
       request.path_info[:activity_slug]
     end
 
