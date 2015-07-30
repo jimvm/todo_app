@@ -1,6 +1,5 @@
 require "rspec"
-require_relative "../app/activities"
-require_relative "../app/account"
+require_relative "../app/persistence"
 
 RSpec.describe "Persistence Layer" do
   after(:each) do

@@ -1,5 +1,5 @@
 require 'httparty'
-require_relative '../../app/activities'
+require_relative '../../app/persistence'
 
 Given(/^an activity called "([^"]*)" exists$/) do |description|
   Activity.create description: description, url_slug: "fake_slug"

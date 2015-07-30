@@ -1,4 +1,4 @@
-require_relative "../app/account"
+require_relative "../app/persistence"
 
 RSpec.describe Account do
   describe ".verify" do

@@ -1,6 +1,5 @@
 require_relative 'decorators'
-require_relative 'activities'
-require_relative 'account'
+require_relative 'persistence'
 require 'json'
 
 class AccountResource < Webmachine::Resource

@@ -1,4 +1,4 @@
-require_relative '../../app/account'
+require_relative '../../app/persistence'
 
 Given(/^no accounts exists$/) do
   expect(Account.all).to be_empty
