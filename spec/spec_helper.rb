@@ -15,5 +15,5 @@ RSpec.configure do |config|
   #   - http://myronmars.to/n/dev-blog/2014/05/notable-changes-in-rspec-3#new__config_option_to_disable_rspeccore_monkey_patching
   config.disable_monkey_patching!
 
-  config.default_formatter = 'doc'
+  config.default_formatter = "doc"
 end

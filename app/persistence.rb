@@ -1,5 +1,5 @@
-require 'sequel'
-require 'bcrypt'
+require "sequel"
+require "bcrypt"
 
 Sequel.postgres ENV["TODO_DATABASE"]
 

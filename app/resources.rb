@@ -1,6 +1,6 @@
-require_relative 'decorators'
-require_relative 'persistence'
-require 'json'
+require_relative "decorators"
+require_relative "persistence"
+require "json"
 
 class AccountResource < Webmachine::Resource
   include Webmachine::Resource::Authentication

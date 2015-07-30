@@ -1,5 +1,5 @@
-require 'childprocess'
-require 'sequel'
+require "childprocess"
+require "sequel"
 
 server = ChildProcess.build "ruby", "webmachine_application.rb"
 server.start

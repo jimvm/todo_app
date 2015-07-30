@@ -1,5 +1,5 @@
-require 'webmachine'
-require_relative 'app/resources'
+require "webmachine"
+require_relative "app/resources"
 
 unless ENV["TODO_DATABASE"]
   warn "Set ENV[\"TODO_DATABASE\"] before running the app. Use 'todo' for\
