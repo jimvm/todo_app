@@ -95,7 +95,7 @@ RSpec.describe "Persistence Layer" do
           Sequel::ValidationFailed, "name is already taken"
         end
 
-        it "ensures it can not be shortet than 4 characters" do
+        it "ensures it can not be shorter than 4 characters" do
           expect{Account.create name: "jim"}.to raise_error \
           Sequel::ValidationFailed, "name is shorter than 4 characters"
         end
