@@ -9,6 +9,10 @@ RSpec.describe "Persistence Layer" do
     db[:accounts].delete
   end
 
+  def slug
+    Activity.create_slug
+  end
+
   describe "Activities" do
     context "description" do
       let(:empty_description)     { "" }
@@ -19,14 +23,14 @@ RSpec.describe "Persistence Layer" do
 
       describe "database constraint" do
         it "ensures it can not be empty" do
-          activity = Activity.new description: empty_description
+          activity = Activity.new description: empty_description, url_slug: slug
 
           expect{activity.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
         end
 
         it "ensures it can not be longer than 80 characters" do
-          activity = Activity.new description: long_description
+          activity = Activity.new description: long_description, url_slug: slug
 
           expect{activity.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
@@ -64,23 +68,23 @@ RSpec.describe "Persistence Layer" do
     describe "name" do
       context "database constraint" do
         it "ensures it is unique" do
-          Account.create name: "myname"
+          Account.create name: "myname", url_slug: slug
 
-          duplicate_name = Account.new name: "myname"
+          duplicate_name = Account.new name: "myname", url_slug: slug
 
           expect{duplicate_name.save(validate: false)}.to raise_error \
           Sequel::UniqueConstraintViolation
         end
 
         it "ensures it is at least 4 characters" do
-          name = Account.new name: "jim"
+          name = Account.new name: "jim", url_slug: slug
 
           expect{name.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
         end
 
         it "ensures it is less than 25 characters" do
-          name = Account.new name: "some_really_really_long_name"
+          name = Account.new name: "some_really_really_long_name", url_slug: slug
 
           expect{name.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
@@ -89,7 +93,7 @@ RSpec.describe "Persistence Layer" do
 
       context "model validation" do
         it "ensures it is unique" do
-          Account.create name: "myname"
+          Account.create name: "myname", url_slug: slug
 
           expect{Account.create name: "myname"}.to raise_error \
           Sequel::ValidationFailed, "name is already taken"
@@ -109,11 +113,11 @@ RSpec.describe "Persistence Layer" do
   end
 
   describe "Accounts with Activities" do
-    let(:account)           { Account.create name: "somename" }
-    let(:different_account) { Account.create name: "othername" }
+    let(:account)           { Account.create name: "somename", url_slug: slug }
+    let(:different_account) { Account.create name: "othername", url_slug: "testing" }
 
     before do
-      account.add_activity Activity.create description: "somedescription"
+      account.add_activity Activity.create description: "somedescription", url_slug: slug
     end
 
     context "database constraint" do
@@ -121,13 +125,13 @@ RSpec.describe "Persistence Layer" do
         db = Sequel.postgres "todo_test"
 
         expect do
-          db[:activities].insert description: "somedescription", account_id: account.id
+          db[:activities].insert description: "somedescription", account_id: account.id, url_slug: slug
         end.to raise_error Sequel::UniqueConstraintViolation
       end
 
       it "ensures different accounts can have an activity with the same description" do
         expect do
-          different_account.add_activity Activity.create description: "somedescription"
+          different_account.add_activity Activity.create description: "somedescription", url_slug: slug
         end.not_to raise_error
       end
     end
@@ -135,7 +139,7 @@ RSpec.describe "Persistence Layer" do
     context "model validation" do
       it "ensures accounts can not have activities with the same description" do
         expect do
-          account.add_activity Activity.create description: "somedescription"
+          account.add_activity Activity.create description: "somedescription", url_slug: slug
         end.to raise_error Sequel::ValidationFailed,
           "description and account_id is already taken"
       end

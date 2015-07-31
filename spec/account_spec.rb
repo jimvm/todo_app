@@ -3,7 +3,9 @@ require_relative "../app/persistence"
 RSpec.describe Account do
   describe ".verify" do
     before(:all) do
-      Account.create name: "someone", password_hash: Account.create_password_hash("test")
+      Account.create name: "someone",
+                     password_hash: Account.create_password_hash("test"),
+                     url_slug: Account.create_slug
     end
 
     context "unauthorized" do
