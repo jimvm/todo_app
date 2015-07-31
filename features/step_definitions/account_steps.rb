@@ -1,45 +1,35 @@
-require_relative "../../app/persistence"
-
 Given(/^no accounts exists$/) do
-  expect(Account.all).to be_empty
+  delete_accounts
 end
 
-When(/^an Admin creates an Account$/) do
-  Account.create name: "somename"
+When(/^an admin creates an account$/) do
+  create_account
 end
 
 Then(/^an account should exist$/) do
-  expect(Account.all).to_not be_empty
+  expect(accounts).to_not be_empty
 end
 
-Given(/^an account named "([^"]*)" exists$/) do |name|
-  Account.create name: name, url_slug: "fake_person", password_hash: Account.create_password_hash("test")
+Given(/^an account exists$/) do
+  create_account
 end
 
-When(/^someone unauthorized visits the "([^"]*)" account page$/) do |name|
-  account = Account.find name: name
-
-  @response = HTTParty.get "http://localhost:8080/accounts/#{account.url_slug}",
-    basic_auth: {:username => "another_person", password: "wrong"}
+When(/^someone unauthorized visits an account page$/) do
+  get_account visitor: "unauth"
 end
 
-When(/^someone authorized visits the "([^"]*)" account page$/) do |name|
-  account = Account.find name: name
+When(/^someone authorized visits another account page$/) do
+  create_account name: "otherperson", url_slug: ""
 
-  Account.create name: "someoneelse", url_slug: "another_fake_slug", password_hash: Account.create_password_hash("test")
-  dif_account = Account.find name: "someoneelse"
-
-  @response = HTTParty.get "http://localhost:8080/accounts/#{account.url_slug}",
-    basic_auth: {:username => dif_account.name, password: "test"}
+  get_account visitor: "otherperson"
 end
 
-When(/^"([^"]*)" visits their account page$/) do |name|
-  account = Account.find name: name
-
-  @response = HTTParty.get "http://localhost:8080/accounts/#{account.url_slug}",
-    basic_auth: {:username => account.name, password: "test"}
+When(/I visit my account$/) do
+  get_account visitor: "aperson"
 end
 
 Then(/^the response body should be empty$/) do
-  expect(@response.body).to be_empty
+  expect(response.body).to be_empty
 end
+
+World(AccountHelpers)

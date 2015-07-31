@@ -1,57 +1,49 @@
-require "httparty"
-require_relative "../../app/persistence"
+require "json"
 
-Given(/^an activity called "([^"]*)" exists$/) do |description|
-  Activity.create description: description, url_slug: "fake_slug"
-end
-
-When(/^I request GET "([^"]*)"$/) do |url|
-  @response = HTTParty.get "http://localhost:8080#{url}", headers: {"Accept" => "application/hal+json"}
+When(/^I visit my activity$/) do
+  get_activity
 end
 
 Then(/^the HAL\/JSON response should be:$/) do |expected_hal_json|
-  expect(JSON.parse(@response.body)).to eq JSON.parse(expected_hal_json)
+  expect(JSON.parse(response.body)).to eq JSON.parse(expected_hal_json)
 end
 
-When(/^I request DELETE "([^"]*)"$/) do |url|
-  @response = HTTParty.delete "http://localhost:8080#{url}"
+When(/^I delete my activity$/) do
+  delete_activity
 end
 
-Then(/^the response code should be (\d+)$/) do |response_code|
-  expect(@response.code.to_s).to eq response_code
+Then(/^the response code should be (\d+)$/) do |code|
+  expect(response_code).to eq code
 end
 
-Then(/^the "([^"]*)" activity should be gone$/) do |description|
-  @response = HTTParty.get "http://localhost:8080/activities/#{description}", headers: {"Accept" => "application/hal+json"}
-  expect(@response.code).to eq 404
+Then(/^the activity should be gone$/) do
+  expect(activity).to be_nil
 end
 
-Given(/^an activity called "([^"]*)" doesn't exist$/) do |description|
-  activity = Activity.find description: description
-  activity.delete if activity
+Then(/^the activity should be updated$/) do
+  expect(activity).to be_nil
 
-  @response = HTTParty.get "http://localhost:8080/activities/#{description}"
-  expect(@response.code).to eq 404
+  expect(updated_activity).to exist
 end
 
-When(/^I request POST "([^"]*)" with:$/) do |url, json|
-  @response = HTTParty.post "http://localhost:8080#{url}", body: "#{json}", headers: {"Content-Type" => "application/json"}
+Given(/^no activities exist$/) do
+  delete_activities
 end
 
-Then(/^the "([^"]*)" activity should exist$/) do |description|
-  activity = Activity.find description: description
-  @response = HTTParty.get "http://localhost:8080/accounts/fake_slug/activities/#{activity.url_slug}"
-  expect(@response.code).to eq 200
+When(/^I post an activity with:$/) do |json|
+  post_activity json
 end
 
-When(/^I request PUT "([^"]*)" with:$/) do |url, json|
-  @response = HTTParty.put "http://localhost:8080#{url}", body: "#{json}", headers: {"Content-Type" => "application/json"}
+Then(/^the activity should be created$/) do
+  expect(created_activity).to exist
 end
 
-Given(/^"([^"]*)" has an activity called "([^"]*)"$/) do |name, description|
-  account = Account.find name: name
-
-  activity = Activity.create description: description, url_slug: "fake_slug"
-  account.add_activity activity
-  account.save
+When(/^I update my activity with:$/) do |json|
+  update_activity json
 end
+
+Given(/^an account has an activity$/) do
+  create_account.add_activity create_activity
+end
+
+World(ActivityHelpers)

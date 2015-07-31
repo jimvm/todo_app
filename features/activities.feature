@@ -2,10 +2,11 @@ Feature: Managing activities
   A person that wants to track their day to day tasks
   should be able to manage their activities.
 
+  Background:
+    Given an account has an activity
+
   Scenario: Viewing all activities
-    Given an account named "aperson" exists
-    And "aperson" has an activity called "something"
-    When "aperson" visits their account page
+    When I visit my account
     Then the response code should be 200
     And the HAL/JSON response should be:
     """
@@ -26,9 +27,7 @@ Feature: Managing activities
     """
 
   Scenario: Viewing a specific activity
-    Given an account named "aperson" exists
-    And "aperson" has an activity called "something"
-    When I request GET "/accounts/fake_person/activities/fake_slug"
+    When I visit my activity
     Then the HAL/JSON response should be:
     """
     { "_links": {
@@ -38,29 +37,23 @@ Feature: Managing activities
     """
 
   Scenario: Creating an activity
-    Given an account named "aperson" exists
-    Given an activity called "nothing" doesn't exist
-    When I request POST "/accounts/fake_person/activities" with:
+    Given no activities exist
+    When I post an activity with:
     """
     {"description": "nothing" }
     """
     Then the response code should be 201
-    And the "nothing" activity should exist
+    And the activity should be created
 
   Scenario: Updating an activity
-    Given an account named "aperson" exists
-    And "aperson" has an activity called "something"
-    When I request PUT "/accounts/fake_person/activities/fake_slug" with:
+    When I update my activity with:
     """
     {"description": "something-else" }
     """
     Then the response code should be 204
-    And the "something" activity should be gone
-    And the "something-else" activity should exist
+    And the activity should be updated
 
   Scenario: Deleting an activity
-    Given an account named "aperson" exists
-    And "aperson" has an activity called "something"
-    When I request DELETE "/accounts/fake_person/activities/fake_slug"
+    When I delete my activity
     Then the response code should be 204
-    And the "something" activity should be gone
+    And the activity should be gone

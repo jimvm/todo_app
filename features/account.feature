@@ -2,26 +2,26 @@ Feature: Managing an account
   A person that wants to track their activities
   should be able to update an account and delete it.
 
+  Background:
+    Given an account exists
+
   Scenario: Creating an Account
     Given no accounts exists
-    When an Admin creates an Account
+    When an admin creates an account
     Then an account should exist
 
   Scenario: An unauthorized person can't see the Account
-    Given an account named "aperson" exists
-    When someone unauthorized visits the "aperson" account page
+    When someone unauthorized visits an account page
     Then the response code should be 401
     And the response body should be empty
 
   Scenario: An authorized person can't see someone else's Account
-    Given an account named "aperson" exists
-    When someone authorized visits the "aperson" account page
+    When someone authorized visits another account page
     Then the response code should be 403
     And the response body should be empty
 
   Scenario: An authorized person can see their Account
-    Given an account named "aperson" exists
-    When "aperson" visits their account page
+    When I visit my account
     Then the response code should be 200
     And the HAL/JSON response should be:
     """
