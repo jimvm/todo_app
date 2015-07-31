@@ -30,11 +30,7 @@ class AccountResource < Webmachine::Resource
   end
 
   def forbidden?
-    if account == authorized_account
-      false
-    else
-      true
-    end
+    true if account != authorized_account
   end
 
   private
