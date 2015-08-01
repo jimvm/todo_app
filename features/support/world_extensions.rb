@@ -1,5 +1,4 @@
 require "httparty"
-require "ostruct"
 require_relative "../../app/persistence"
 
 module AccountHelpers
