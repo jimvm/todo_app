@@ -6,23 +6,29 @@ task :setup_test_database do
   db.create_table :accounts do
     primary_key :id
     String :name,       unique: true
-    String :url_slug,    unique: true, null: false
+    String :url_slug,    unique: true
     String :password_hash,    unique: true
 
     constraint(:min_length_name) { char_length(name) > 3 }
     constraint(:max_length_name) { char_length(name) < 25}
+
+    constraint(:min_length_url_slug) { char_length(url_slug) > 11 }
+    constraint(:max_length_url_slug) { char_length(url_slug) < 13}
   end
 
   db.create_table :activities do
     primary_key :id
     String :description
-    String :url_slug,    unique: true, null: false
+    String :url_slug,    unique: true
     foreign_key :account_id, :accounts
 
     constraint(:min_length_description) { char_length(description) > 0 }
     constraint(:max_length_description) { char_length(description) < 81 }
 
     unique [:description, :account_id]
+
+    constraint(:min_length_url_slug) { char_length(url_slug) > 11 }
+    constraint(:max_length_url_slug) { char_length(url_slug) < 13}
   end
 end
 

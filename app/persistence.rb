@@ -24,6 +24,9 @@ class Activity < Sequel::Model
     validates_min_length 1,  :description
     validates_max_length 80, :description
     validates_unique [:description, :account_id]
+
+    validates_unique         :url_slug
+    validates_exact_length 12, :url_slug
   end
 end
 
@@ -41,6 +44,9 @@ class Account < Sequel::Model
     validates_min_length 4,  :name
     validates_max_length 24, :name
     validates_unique         :name
+
+    validates_unique         :url_slug
+    validates_exact_length 12, :url_slug
   end
 
   def self.create_password_hash(password)

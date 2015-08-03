@@ -19,7 +19,7 @@ When(/^someone unauthorized visits an account page$/) do
 end
 
 When(/^someone authorized visits another account page$/) do
-  create_account name: "otherperson", url_slug: ""
+  create_account name: "otherperson", url_slug: "fake_person2"
 
   get_account visitor: "otherperson"
 end

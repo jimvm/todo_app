@@ -39,26 +39,49 @@ RSpec.describe "Persistence Layer" do
 
       describe "model validation" do
         it "ensures it can not be empty" do
-          expect{Activity.create description: empty_description}.to raise_error \
+          expect{Activity.create description: empty_description, url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "description is shorter than 1 characters"
         end
 
         it "ensures it can not be longer than 80 characters" do
-          expect{Activity.create description: long_description}.to raise_error \
+          expect{Activity.create description: long_description, url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "description is longer than 80 characters"
         end
       end
     end
 
     describe "url_slug" do
+      let!(:activity) do
+        Activity.create url_slug: "duplicate_00", description: "some description"
+      end
+
       context "database constraint" do
         it "ensures it is unique" do
-          Activity.create url_slug: "fake_slug", description: "some description"
-
-          duplicate_slug = Activity.new url_slug: "fake_slug", description: "something"
+          duplicate_slug = Activity.new url_slug: "duplicate_00", description: "something"
 
           expect{duplicate_slug.save(validate: false)}.to raise_error \
           Sequel::UniqueConstraintViolation
+        end
+
+        it "ensures it is exactly 12 characters" do
+          empty_slug = Activity.new description: "something", url_slug: "too_short"
+
+          expect{empty_slug.save(validate: false)}.to raise_error \
+          Sequel::CheckConstraintViolation
+        end
+      end
+
+      context "model validations" do
+        it "ensures it is unique" do
+          expect do
+            Activity.create description: "test", url_slug: "duplicate_00"
+          end.to raise_error Sequel::ValidationFailed, "url_slug is already taken"
+        end
+
+        it "ensures it is exactly 12 characters" do
+          expect do
+            Activity.create description: "test", url_slug: "just_eleven"
+          end.to raise_error Sequel::ValidationFailed, "url_slug is not 12 characters"
         end
       end
     end
@@ -95,18 +118,54 @@ RSpec.describe "Persistence Layer" do
         it "ensures it is unique" do
           Account.create name: "myname", url_slug: slug
 
-          expect{Account.create name: "myname"}.to raise_error \
+          expect{Account.create name: "myname", url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "name is already taken"
         end
 
         it "ensures it can not be shorter than 4 characters" do
-          expect{Account.create name: "jim"}.to raise_error \
+          expect{Account.create name: "jim", url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "name is shorter than 4 characters"
         end
 
         it "ensures it can not be longer than 24 characters" do
-          expect{Account.create name: "some_really_really_long_name"}.to raise_error \
+          expect{Account.create name: "some_really_really_long_name", url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "name is longer than 24 characters"
+        end
+      end
+    end
+
+    describe "url_slug" do
+      let!(:account) do
+        Account.create url_slug: "duplicate_00", name: "some_name"
+      end
+
+      context "database constraints" do
+        it "ensures it is unique" do
+          duplicate_slug = Account.new url_slug: "duplicate_00", name: "myname"
+
+          expect{duplicate_slug.save(validate: false)}.to raise_error \
+          Sequel::UniqueConstraintViolation
+        end
+
+        it "ensures it is exactly 12 characters" do
+          short_slug = Account.new url_slug: "something", name: "myname"
+
+          expect{short_slug.save(validate: false)}.to raise_error \
+          Sequel::CheckConstraintViolation
+        end
+      end
+
+      context "model validations" do
+        it "ensures it is unique" do
+          expect do
+            Account.create name: "myname", url_slug: "duplicate_00"
+          end.to raise_error Sequel::ValidationFailed, "url_slug is already taken"
+        end
+
+        it "ensures it is exactly 12 characters" do
+          expect do
+            Account.create name: "myname", url_slug: "just_eleven"
+          end.to raise_error Sequel::ValidationFailed, "url_slug is not 12 characters"
         end
       end
     end
@@ -114,7 +173,7 @@ RSpec.describe "Persistence Layer" do
 
   describe "Accounts with Activities" do
     let(:account)           { Account.create name: "somename", url_slug: slug }
-    let(:different_account) { Account.create name: "othername", url_slug: "testing" }
+    let(:different_account) { Account.create name: "othername", url_slug: slug }
 
     before do
       account.add_activity Activity.create description: "somedescription", url_slug: slug

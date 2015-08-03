@@ -2,7 +2,7 @@ require "httparty"
 require_relative "../../app/persistence"
 
 module AccountHelpers
-  def create_account(name:"aperson", url_slug:"fake_person")
+  def create_account(name:"aperson", url_slug:"fake_person1")
     Account.create name: name,
                    url_slug: url_slug,
                    password_hash: Account.create_password_hash("test")
@@ -13,7 +13,7 @@ module AccountHelpers
   end
 
   def get_account(visitor:)
-    @response = HTTParty.get "http://localhost:8080/accounts/fake_person",
+    @response = HTTParty.get "http://localhost:8080/accounts/fake_person1",
       basic_auth: {:username => visitor, password: "test"}
   end
 
@@ -48,7 +48,7 @@ module ActivityHelpers
   end
 
   def create_activity
-    Activity.create description: "something", url_slug: "fake_slug"
+    Activity.create description: "something", url_slug: "fake_slug_01"
   end
 
   def delete_activities
@@ -68,11 +68,11 @@ module ActivityHelpers
   end
 
   def activities_url
-    "http://localhost:8080/accounts/fake_person/activities/"
+    "http://localhost:8080/accounts/fake_person1/activities/"
   end
 
   def activity_url
-    "http://localhost:8080/accounts/fake_person/activities/fake_slug"
+    "http://localhost:8080/accounts/fake_person1/activities/fake_slug_01"
   end
 
   attr_reader :response
