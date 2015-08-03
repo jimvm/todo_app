@@ -91,23 +91,23 @@ RSpec.describe "Persistence Layer" do
     describe "name" do
       context "database constraint" do
         it "ensures it is unique" do
-          Account.create name: "myname", url_slug: slug
+          Account.create name: "myname", url_slug: slug, password_hash: "test"
 
-          duplicate_name = Account.new name: "myname", url_slug: slug
+          duplicate_name = Account.new name: "myname", url_slug: slug, password_hash: "test"
 
           expect{duplicate_name.save(validate: false)}.to raise_error \
           Sequel::UniqueConstraintViolation
         end
 
         it "ensures it is at least 4 characters" do
-          name = Account.new name: "jim", url_slug: slug
+          name = Account.new name: "jim", url_slug: slug, password_hash: "test"
 
           expect{name.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
         end
 
         it "ensures it is less than 25 characters" do
-          name = Account.new name: "some_really_really_long_name", url_slug: slug
+          name = Account.new name: "some_really_really_long_name", url_slug: slug, password_hash: "test"
 
           expect{name.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
@@ -116,7 +116,7 @@ RSpec.describe "Persistence Layer" do
 
       context "model validation" do
         it "ensures it is unique" do
-          Account.create name: "myname", url_slug: slug
+          Account.create name: "myname", url_slug: slug, password_hash: "test"
 
           expect{Account.create name: "myname", url_slug: slug}.to raise_error \
           Sequel::ValidationFailed, "name is already taken"
@@ -136,19 +136,19 @@ RSpec.describe "Persistence Layer" do
 
     describe "url_slug" do
       let!(:account) do
-        Account.create url_slug: "duplicate_00", name: "some_name"
+        Account.create url_slug: "duplicate_00", name: "some_name", password_hash: "test"
       end
 
       context "database constraints" do
         it "ensures it is unique" do
-          duplicate_slug = Account.new url_slug: "duplicate_00", name: "myname"
+          duplicate_slug = Account.new url_slug: "duplicate_00", name: "myname", password_hash: "test"
 
           expect{duplicate_slug.save(validate: false)}.to raise_error \
           Sequel::UniqueConstraintViolation
         end
 
         it "ensures it is exactly 12 characters" do
-          short_slug = Account.new url_slug: "something", name: "myname"
+          short_slug = Account.new url_slug: "something", name: "myname", password_hash: "test"
 
           expect{short_slug.save(validate: false)}.to raise_error \
           Sequel::CheckConstraintViolation
@@ -172,8 +172,8 @@ RSpec.describe "Persistence Layer" do
   end
 
   describe "Accounts with Activities" do
-    let(:account)           { Account.create name: "somename", url_slug: slug }
-    let(:different_account) { Account.create name: "othername", url_slug: slug }
+    let(:account)           { Account.create name: "somename", url_slug: slug, password_hash: "test" }
+    let(:different_account) { Account.create name: "othername", url_slug: slug, password_hash: "test" }
 
     before do
       account.add_activity Activity.create description: "somedescription", url_slug: slug
