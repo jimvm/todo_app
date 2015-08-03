@@ -20,7 +20,7 @@ task :setup_test_database do
     primary_key :id
     String :description, null: false
     String :url_slug,    unique: true, null: false
-    foreign_key :account_id, :accounts
+    foreign_key :account_id, :accounts, null: false
 
     constraint(:min_length_description) { char_length(description) > 0 }
     constraint(:max_length_description) { char_length(description) < 81 }

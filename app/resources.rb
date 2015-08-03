@@ -116,7 +116,7 @@ class ActivitiesResource < Webmachine::Resource
 
   private
     def from_json
-      account.add_activity Activity.create description: description, url_slug: activity_slug
+      account.add_activity Activity.new description: description, url_slug: activity_slug
     end
 
     def description

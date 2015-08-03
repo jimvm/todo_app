@@ -48,7 +48,7 @@ module ActivityHelpers
   end
 
   def create_activity
-    Activity.create description: "something", url_slug: "fake_slug_01"
+    Activity.new description: "something", url_slug: "fake_slug_01"
   end
 
   def delete_activities

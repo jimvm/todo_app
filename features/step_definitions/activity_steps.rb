@@ -43,7 +43,7 @@ When(/^I update my activity with:$/) do |json|
 end
 
 Given(/^an account has an activity$/) do
-  create_account.add_activity create_activity
+  account = create_account.add_activity create_activity
 end
 
 World(ActivityHelpers)
