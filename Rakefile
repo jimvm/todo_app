@@ -1,4 +1,5 @@
 require "sequel"
+require_relative "./app/persistence"
 
 task :setup_test_database do
   db = Sequel.postgres "todo_test"
@@ -37,4 +38,25 @@ task :drop_test_database do
 
   db.drop_table :activities
   db.drop_table :accounts
+end
+
+task :setup_account do |t, args|
+  unless ENV["account_name"] && ENV["account_password"]
+message = """Make sure that you give both an account_name and an account_password to the setup_account task.
+
+Example:
+rake setup_account account_name=myname account_password=whatever
+"""
+    puts message
+    abort
+  end
+
+  puts "Creating account..."
+  Account.create name: ENV["account_name"],
+    password_hash: Account.create_password_hash(ENV["account_password"]),
+    url_slug: Account.create_slug
+
+  if Account.find name: ENV["account_name"]
+    puts "Successfully created account."
+  end
 end
