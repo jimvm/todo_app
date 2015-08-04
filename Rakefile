@@ -1,8 +1,35 @@
 require "sequel"
 require_relative "./app/persistence"
+require "cucumber/rake/task"
+require "rspec/core/rake_task"
 
-task :setup_test_database do
-  db = Sequel.postgres "todo_test"
+task default: [:setup_database, :spec, :features, :drop_database]
+
+RSpec::Core::RakeTask.new(:spec)
+
+Cucumber::Rake::Task.new(:features) do
+  ENV["TODO_DATABASE"] = "todo_test"
+end
+
+task :run do
+  ENV["TODO_DATABASE"]="todo"
+
+  `ruby webmachine_application.rb`
+end
+
+task :setup_database do
+  unless ENV["TODO_DATABASE"]
+  message = """Make sure to give a database name to the setup_database task.
+
+Example:
+  rake setup_database TODO_DATABASE=todo_test
+"""
+    puts message
+    abort
+  end
+
+  puts "Setting up database..."
+  db = Sequel.postgres ENV["TODO_DATABASE"]
 
   db.create_table :accounts do
     primary_key :id
@@ -33,8 +60,20 @@ task :setup_test_database do
   end
 end
 
-task :drop_test_database do
-  db = Sequel.postgres "todo_test"
+task :drop_database do
+  unless ENV["TODO_DATABASE"]
+    message = """Make sure to give a database name to the drop_database task.
+
+Example:
+  rake drop_database TODO_DATABASE=todo_test
+"""
+
+    puts message
+    abort
+  end
+
+  puts "Dropping database..."
+  db = Sequel.postgres ENV["TODO_DATABASE"]
 
   db.drop_table :activities
   db.drop_table :accounts
