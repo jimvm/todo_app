@@ -1,13 +1,6 @@
 require_relative "../app/persistence"
 
-
 RSpec.describe Account do
-  after(:each) do
-    db = Sequel.postgres "todo_test"
-
-    db[:activities].delete
-    db[:accounts].delete
-  end
 
   def slug
     Account.create_slug

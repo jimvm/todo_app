@@ -16,4 +16,11 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
 
   config.default_formatter = "doc"
+
+  config.after(:each) do
+    db = Sequel.postgres "todo_test"
+
+    db[:activities].delete
+    db[:accounts].delete
+  end
 end
