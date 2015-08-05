@@ -8,10 +8,7 @@ RSpec.describe Activity do
     db[:accounts].delete
   end
 
-  def slug
-    Activity.create_slug
-  end
-
+  let(:slug)    { Activity.create_slug }
   let(:account) { Account.create name: "somename", url_slug: slug, password_hash: "test" }
 
   describe "#description" do
@@ -21,73 +18,80 @@ RSpec.describe Activity do
        information about what I want to do."
     end
 
-    describe "database constraint" do
-      it "ensures it can not be empty" do
-        activity = Activity.new description: empty_description, url_slug: slug
-        activity.account = account
+    subject do
+      activity = Activity.new url_slug: slug, description: test_description
+      activity.account = account
+      activity
+    end
 
-        expect{activity.save(validate: false)}.to raise_error \
+    context "when it is empty" do
+      let(:test_description) { empty_description }
+
+      specify do
+        expect{ subject.save(validate: false) }.to raise_error \
         Sequel::CheckConstraintViolation
       end
 
-      it "ensures it can not be longer than 80 characters" do
-        activity = Activity.new description: long_description, url_slug: slug
-        activity.account = account
-
-        expect{activity.save(validate: false)}.to raise_error \
-        Sequel::CheckConstraintViolation
+      specify do
+        expect{ subject.save }.to raise_error \
+        Sequel::ValidationFailed, "description is shorter than 1 characters"
       end
     end
 
-    describe "model validation" do
-      it "ensures it can not be empty" do
-        expect{Activity.create description: empty_description, url_slug: slug}.to raise_error \
-        Sequel::ValidationFailed, "description is shorter than 1 characters"
+    context "when it is longer than 80 characters" do
+      let(:test_description) { long_description }
+
+      specify do
+        expect{subject.save(validate: false)}.to raise_error \
+        Sequel::CheckConstraintViolation
       end
 
-      it "ensures it can not be longer than 80 characters" do
-        expect{Activity.create description: long_description, url_slug: slug}.to raise_error \
+      specify do
+        expect{ subject.save }.to raise_error \
         Sequel::ValidationFailed, "description is longer than 80 characters"
       end
     end
   end
 
   describe "#url_slug" do
-    let!(:activity) do
-      activity = Activity.new url_slug: "duplicate_00", description: "some description"
+    before do
+      activity = Activity.new url_slug: duplicate, description: "some description"
       activity.account = account
       activity.save
     end
 
-    context "database constraint" do
-      it "ensures it is unique" do
-        duplicate_slug = Activity.new url_slug: "duplicate_00", description: "something"
-        duplicate_slug.account = account
+    let(:duplicate) { "duplicate_00" }
+    let(:too_short) { "too_short" }
 
-        expect{duplicate_slug.save(validate: false)}.to raise_error \
+    subject do
+      activity = Activity.new url_slug: test_slug, description: "something"
+      activity.account = account
+      activity
+    end
+
+    context "when it is not unique" do
+      let(:test_slug) { duplicate }
+
+      specify do
+        expect{ subject.save(validate: false) }.to raise_error \
         Sequel::UniqueConstraintViolation
       end
 
-      it "ensures it is exactly 12 characters" do
-        empty_slug = Activity.new description: "something", url_slug: "too_short"
-        empty_slug.account = account
-
-        expect{empty_slug.save(validate: false)}.to raise_error \
-        Sequel::CheckConstraintViolation
+      specify do
+        expect{ subject.save }.to raise_error Sequel::ValidationFailed, "url_slug is already taken"
       end
     end
 
-    context "model validations" do
-      it "ensures it is unique" do
-        expect do
-          Activity.create description: "test", url_slug: "duplicate_00"
-        end.to raise_error Sequel::ValidationFailed, "url_slug is already taken"
+    context "when it is not exactly 12 characters" do
+      let(:test_slug) { too_short }
+
+      specify do
+        expect{ subject.save(validate: false) }.to raise_error \
+        Sequel::CheckConstraintViolation
       end
 
-      it "ensures it is exactly 12 characters" do
-        expect do
-          Activity.create description: "test", url_slug: "just_eleven"
-        end.to raise_error Sequel::ValidationFailed, "url_slug is not 12 characters"
+      specify do
+        expect{ subject.save }.to raise_error Sequel::ValidationFailed, "url_slug is not 12 characters"
       end
     end
   end
