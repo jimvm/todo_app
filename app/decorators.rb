@@ -8,6 +8,10 @@ class ActivityDecorator < Roar::Decorator
     "http://localhost:8080/#{represented.account.url_slug}/activities/#{represented.url_slug}"
   end
 
+  link :up do
+    "http://localhost:8080/#{represented.account.url_slug}/"
+  end
+
   property :description
 end
 

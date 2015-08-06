@@ -17,7 +17,8 @@ Feature: Managing activities
     "_embedded": {
       "activities": [
       { "_links": {
-          "self": { "href": "http://localhost:8080/fake_person1/activities/fake_slug_01"}
+        "self": { "href": "http://localhost:8080/fake_person1/activities/fake_slug_01"},
+        "up": {"href": "http://localhost:8080/fake_person1/"}
           },
           "description": "something"
       }
@@ -31,7 +32,8 @@ Feature: Managing activities
     Then the HAL/JSON response should be:
     """
     { "_links": {
-      "self": { "href": "http://localhost:8080/fake_person1/activities/fake_slug_01" }
+      "self": { "href": "http://localhost:8080/fake_person1/activities/fake_slug_01" },
+      "up": {"href": "http://localhost:8080/fake_person1/"}
       },
       "description": "something"}
     """
