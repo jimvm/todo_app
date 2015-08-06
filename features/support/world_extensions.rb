@@ -13,7 +13,7 @@ module AccountHelpers
   end
 
   def get_account(visitor:)
-    @response = HTTParty.get "http://localhost:8080/accounts/fake_person1",
+    @response = HTTParty.get "http://localhost:8080/fake_person1",
       basic_auth: {:username => visitor, password: "test"}
   end
 
@@ -68,11 +68,11 @@ module ActivityHelpers
   end
 
   def activities_url
-    "http://localhost:8080/accounts/fake_person1/activities/"
+    "http://localhost:8080/fake_person1/activities/"
   end
 
   def activity_url
-    "http://localhost:8080/accounts/fake_person1/activities/fake_slug_01"
+    "http://localhost:8080/fake_person1/activities/fake_slug_01"
   end
 
   attr_reader :response

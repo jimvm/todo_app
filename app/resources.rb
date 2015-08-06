@@ -107,7 +107,7 @@ class ActivitiesResource < Webmachine::Resource
   end
 
   def create_path
-    "/accounts/#{account_slug}/activities/#{activity_slug}"
+    "/#{account_slug}/activities/#{activity_slug}"
   end
 
   def to_json
