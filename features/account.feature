@@ -8,7 +8,24 @@ Feature: Managing an account
   Scenario: Creating an Account
     Given no accounts exists
     When an admin creates an account
-    Then an account should exist
+    And I visit the homepage
+    Then the response code should be 200
+    And the HAL/JSON response should be:
+    """
+    { "_links": {
+      "self" : { "href": "http://localhost:8080/" }
+      },
+      "_embedded": { "accounts" : [
+        { "_links" : {
+          "self" :
+          { "href" :
+            "http://localhost:8080/fake_person1"}
+          },
+          "name" : "aperson",
+          "_embedded" : { "activities" : [] }
+         }]
+       }}
+    """
 
   Scenario: An unauthorized person can't see the Account
     When someone unauthorized visits an account page

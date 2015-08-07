@@ -17,8 +17,8 @@ module AccountHelpers
       basic_auth: {:username => visitor, password: "test"}
   end
 
-  def accounts
-    Account.all
+  def get_homepage
+    @response = HTTParty.get "http://localhost:8080/"
   end
 
   attr_reader :response

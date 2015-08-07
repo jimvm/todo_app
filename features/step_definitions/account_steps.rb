@@ -28,6 +28,10 @@ When(/I visit my account$/) do
   get_account visitor: "aperson"
 end
 
+When(/^I visit the homepage$/) do
+  get_homepage
+end
+
 Then(/^the response body should be empty$/) do
   expect(response.body).to be_empty
 end

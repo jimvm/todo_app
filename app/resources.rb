@@ -2,6 +2,24 @@ require_relative "decorators"
 require_relative "persistence"
 require "json"
 
+class AccountsResource < Webmachine::Resource
+  def allowed_methods
+    ["GET"]
+  end
+
+  def content_types_provided
+    [["application/hal+json", :to_json]]
+  end
+
+  def resource_exists?
+    true
+  end
+
+  def to_json
+    AccountsDecorator.new(Account).to_json
+  end
+end
+
 class AccountResource < Webmachine::Resource
   include Webmachine::Resource::Authentication
 
