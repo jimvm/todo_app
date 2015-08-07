@@ -7,18 +7,15 @@ task default: [:setup_database, :spec, :features, :drop_database]
 
 RSpec::Core::RakeTask.new(:spec)
 
-Cucumber::Rake::Task.new(:features) do
-  ENV["TODO_DATABASE"] = "todo_test"
-end
+Cucumber::Rake::Task.new(:features)
 
 task :run do
-  ENV["TODO_DATABASE"]="todo"
-
   `ruby webmachine_application.rb`
 end
 
 task :setup_database do
   unless ENV["TODO_DATABASE"]
+    puts ENV['TODO_DATABASE']
   message = """Make sure to give a database name to the setup_database task.
 
 Example:
@@ -80,7 +77,7 @@ Example:
 end
 
 task :setup_account do |t, args|
-  unless ENV["account_name"] && ENV["account_password"]
+  unless ENV["ACCOUNT_NAME"] && ENV["ACCOUNT_PASSWORD"]
 message = """Make sure that you give both an account_name and an account_password to the setup_account task.
 
 Example:
@@ -91,11 +88,11 @@ rake setup_account account_name=myname account_password=whatever
   end
 
   puts "Creating account..."
-  Account.create name: ENV["account_name"],
-    password_hash: Account.create_password_hash(ENV["account_password"]),
+  Account.create name: ENV["ACCOUNT_NAME"],
+    password_hash: Account.create_password_hash(ENV["ACCOUNT_PASSWORD"]),
     url_slug: Account.create_slug
 
-  if Account.find name: ENV["account_name"]
+  if Account.find name: ENV["ACCOUNT_NAME"]
     puts "Successfully created account."
   end
 end
